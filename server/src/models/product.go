@@ -28,8 +28,8 @@ func SaveProduct(name, description string) {
 }
 
 func GetProductsByPage(pageNum int) *[]Product {
-	offset := (pageNum - 1) * 10
 	resultArr := new([]Product)
+	offset := (pageNum - 1) * 10
 
 	db := getConnectionDB()
 	defer db.Close()

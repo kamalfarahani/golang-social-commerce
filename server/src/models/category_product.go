@@ -1,12 +1,12 @@
 package models
 
-func GetProductsByCategoryName(name string) *[]Product {
+func GetProductsByCategoryName(catName string) *[]Product {
 	resultArr := new([]Product)
 	cat := new(Category)
 
 	db := getConnectionDB()
 	defer db.Close()
-	db.Where("name = ?", name).First(cat)
+	db.Where("name = ?", catName).First(cat)
 	db.Model(cat).
 		Related(resultArr, "products")
 
@@ -24,6 +24,25 @@ func GetProductsByCategoryID(id int) *[]Product {
 	db := getConnectionDB()
 	defer db.Close()
 	db.First(cat, id)
+	db.Model(cat).
+		Related(resultArr, "products")
+
+	if len(*resultArr) > 0 {
+		return resultArr
+	} else {
+		return nil
+	}
+}
+
+func GetCategoryProductsByPage(catName string, pageNum int) *[]Product {
+	resultArr := new([]Product)
+	cat := new(Category)
+	offset := (pageNum - 1) * 10
+
+	db := getConnectionDB()
+	defer db.Close()
+	db.Limit(10).Offset(offset).
+		Where("name = ?", catName).First(cat)
 	db.Model(cat).
 		Related(resultArr, "products")
 

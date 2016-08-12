@@ -11,15 +11,16 @@ func getCategory(context *iris.Context) {
 	name := context.Param("name")
 	rawCat := models.GetCategoryByName(name)
 
-	if rawCat != nil {
-		vmCat :=
-			converters.ConvertCategoryToView(*rawCat)
-		jsonCat, _ := json.Marshal(&vmCat)
-		addJsonHeader(context)
-		context.Write(string(jsonCat))
-	} else {
+	if rawCat == nil {
 		context.NotFound()
+		return
 	}
+
+	vmCat :=
+		converters.ConvertCategoryToView(*rawCat)
+	jsonCat, _ := json.Marshal(&vmCat)
+	addJsonHeader(context)
+	context.Write(string(jsonCat))
 }
 
 func getAllCategories(context *iris.Context) {
