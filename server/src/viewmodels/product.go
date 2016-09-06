@@ -6,4 +6,5 @@ type Product struct {
 	ImgUrl      string
 	Price       int
 	ID          uint
+	Likes       uint
 }

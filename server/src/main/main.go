@@ -3,8 +3,8 @@ package main
 import (
 	"runtime"
 
-	"kamal/server/social-commerce/panel/src/admin"
-	"kamal/server/social-commerce/server/src/controllers"
+	"../../../panel/src/admin"
+	"../controllers"
 )
 
 func main() {

@@ -1,8 +1,8 @@
 package converters
 
 import (
-	"kamal/server/social-commerce/server/src/models"
-	"kamal/server/social-commerce/server/src/viewmodels"
+	"../models"
+	"../viewmodels"
 )
 
 func ConvertProductToView(product models.Product) viewmodels.Product {
@@ -12,6 +12,7 @@ func ConvertProductToView(product models.Product) viewmodels.Product {
 		ImgUrl:      product.ImgUrl,
 		Price:       product.Price,
 		ID:          product.ID,
+		Likes:       product.Likes,
 	}
 	return vmProduct
 }

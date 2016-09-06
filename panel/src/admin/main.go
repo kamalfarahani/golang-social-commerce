@@ -8,7 +8,8 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/qor/admin"
 	"github.com/qor/qor"
-	"kamal/server/social-commerce/server/src/models"
+
+	"../../../server/src/models"
 )
 
 func MakeAdminPanel() {

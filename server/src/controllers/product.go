@@ -2,9 +2,12 @@ package controllers
 
 import (
 	"encoding/json"
+	"strconv"
+
 	"github.com/kataras/iris"
-	"kamal/server/social-commerce/server/src/converters"
-	"kamal/server/social-commerce/server/src/models"
+
+	"../converters"
+	"../models"
 )
 
 func getProduct(context *iris.Context) {
@@ -14,9 +17,10 @@ func getProduct(context *iris.Context) {
 		return
 	}
 
-	rawProduct := models.GetProductByID(id)
-	if rawProduct == nil {
-		context.NotFound()
+	rawProduct, err :=
+		models.GetProductByID(uint(id))
+	if err != nil {
+		context.Write(err.Error())
 		return
 	}
 
@@ -34,15 +38,22 @@ func getProductsByPage(context *iris.Context) {
 		return
 	}
 
-	rawProducts := models.GetProductsByPage(page)
-	if rawProducts == nil {
-		context.NotFound()
+	rawProducts, err :=
+		models.GetProductsByPage(uint(page))
+	if err != nil {
+		context.Write(err.Error())
 		return
 	}
 
 	vmProducts :=
-		converters.ConvertProductsToViews(*rawProducts)
-	jsonProduct, _ := json.Marshal(&vmProducts)
+		converters.ConvertProductsToViews(rawProducts)
+	jsonProduct, _ := json.Marshal(vmProducts)
 	addJsonHeader(context)
 	context.Write(string(jsonProduct))
+}
+
+func getProductsPageCount(context *iris.Context) {
+	countStr :=
+		strconv.Itoa(int(models.GetProductsPageCount()))
+	context.Write(countStr)
 }

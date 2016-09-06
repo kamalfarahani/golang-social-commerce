@@ -1,6 +1,10 @@
 package models
 
-import "github.com/jinzhu/gorm"
+import (
+	"errors"
+
+	"github.com/jinzhu/gorm"
+)
 
 type Product struct {
 	gorm.Model
@@ -8,6 +12,8 @@ type Product struct {
 	Description string
 	ImgUrl      string
 	Price       int
+	CatID       uint
+	Likes       uint
 }
 
 func CreateProductTable() {
@@ -23,46 +29,70 @@ func SaveProduct(name, description string) {
 	db := getConnectionDB()
 	defer db.Close()
 	db.Save(
-		&Product{Name: name,
-			Description: description})
+		&Product{
+			Name:        name,
+			Description: description,
+		})
 }
 
-func GetProductsByPage(pageNum int) *[]Product {
-	resultArr := new([]Product)
-	offset := (pageNum - 1) * 10
-
-	db := getConnectionDB()
-	defer db.Close()
-	db.Limit(10).Offset(offset).Find(resultArr)
-
-	if len(*resultArr) > 0 {
-		return resultArr
-	}
-	return nil
-}
-
-func GetProductByID(id int) *Product {
+func GetProductByID(id uint) (*Product, error) {
 	result := new(Product)
 
 	db := getConnectionDB()
 	defer db.Close()
 	db.First(result, id)
 
-	if result.Name != "" || result.Description != "" {
-		return result
+	if result.Name != "" {
+		return result, nil
 	}
-	return nil
+	return result, errors.New("Product ID is wrong")
 }
 
-func GetProductsByName(name string) *[]Product {
-	resultArr := new([]Product)
+func GetProductsByPage(pageNum uint) ([]Product, error) {
+	if pageNum > GetProductsPageCount() {
+		return nil, errors.New(
+			"The page is bigger than page count")
+	}
+
+	var productsArr []Product
+	offset := (pageNum - 1) * 10
 
 	db := getConnectionDB()
 	defer db.Close()
-	db.Where("name = ?", name).Find(resultArr)
+	db.Limit(10).
+		Offset(offset).Find(&productsArr)
 
-	if len(*resultArr) > 0 {
-		return resultArr
+	return productsArr, nil
+}
+
+func GetProductsByName(name string) ([]Product, error) {
+	var productsArr []Product
+
+	db := getConnectionDB()
+	defer db.Close()
+	db.Where("name = ?", name).Find(&productsArr)
+
+	if len(productsArr) > 0 {
+		return productsArr, nil
+	} else {
+		return productsArr, errors.New("No product found")
 	}
-	return nil
+}
+
+func GetProductsPageCount() uint {
+	var productsCount uint
+
+	db := getConnectionDB()
+	defer db.Close()
+	db.Model(&Product{}).Count(&productsCount)
+
+	pageCountInt :=
+		(productsCount / 10.0)
+	pageCountFloat :=
+		(float32(productsCount) / 10.0)
+
+	if float32(pageCountInt) < pageCountFloat {
+		return (pageCountInt + 1)
+	}
+	return pageCountInt
 }

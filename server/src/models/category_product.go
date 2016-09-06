@@ -1,71 +1,66 @@
 package models
 
-func GetProductsByCategoryName(catName string) *[]Product {
-	resultArr := new([]Product)
-	cat := new(Category)
+import "errors"
+
+func GetProductsByCategoryName(catName string) ([]Product, error) {
+	var productsArr []Product
+	cat, err := GetCategoryByName(catName)
+	if err != nil {
+		return productsArr,
+			errors.New("invalid category name")
+	}
 
 	db := getConnectionDB()
 	defer db.Close()
-	db.Where("name = ?", catName).First(cat)
 	db.Model(cat).
-		Related(resultArr, "products")
+		Related(&productsArr, "products")
 
-	if len(*resultArr) > 0 {
-		return resultArr
-	} else {
-		return nil
+	if len(productsArr) > 0 {
+		return productsArr, nil
 	}
+	return productsArr, errors.New("Category has no product")
 }
 
-func GetProductsByCategoryID(id int) *[]Product {
-	resultArr := new([]Product)
-	cat := new(Category)
+func GetProductsByCategoryID(id uint) ([]Product, error) {
+	var productsArr []Product
+	cat, err := GetCategoryByID(id)
+	if err != nil {
+		return productsArr,
+			errors.New("invalid category id")
+	}
 
 	db := getConnectionDB()
 	defer db.Close()
-	db.First(cat, id)
 	db.Model(cat).
-		Related(resultArr, "products")
+		Related(&productsArr, "products")
 
-	if len(*resultArr) > 0 {
-		return resultArr
-	} else {
-		return nil
+	if len(productsArr) > 0 {
+		return productsArr, nil
 	}
+	return productsArr, errors.New("Category has no product")
 }
 
-func GetCategoryProductsByPage(catName string, pageNum int) *[]Product {
-	resultArr := new([]Product)
-	cat := new(Category)
-	offset := (pageNum - 1) * 10
+//this function has to be fixed
+func GetCategoryProductsByPage(catName string, pageNum uint) []Product {
+	var productsArr []Product
+	cat, _ := GetCategoryByName(catName)
+	// offset := (pageNum - 1) * 10
 
 	db := getConnectionDB()
 	defer db.Close()
-	db.Limit(10).Offset(offset).
-		Where("name = ?", catName).First(cat)
 	db.Model(cat).
-		Related(resultArr, "products")
+		Related(&productsArr, "products")
 
-	if len(*resultArr) > 0 {
-		return resultArr
-	} else {
-		return nil
+	if len(productsArr) > 0 {
+		return productsArr
 	}
+	return nil
 }
 
-func GetCategoriesByProductID(id int) *[]Category {
-	resultArr := new([]Category)
-	product := new(Product)
-
-	db := getConnectionDB()
-	defer db.Close()
-	db.First(product, id)
-	db.Model(product).
-		Related(resultArr)
-
-	if len(*resultArr) > 0 {
-		return resultArr
-	} else {
-		return nil
+func GetCategoryByProductID(id uint) (*Category, error) {
+	product, err := GetProductByID(id)
+	if err != nil {
+		return nil, err
 	}
+	return GetCategoryByID(product.CatID)
 }

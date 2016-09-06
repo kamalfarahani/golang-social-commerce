@@ -1,8 +1,8 @@
 package converters
 
 import (
-	"kamal/server/social-commerce/server/src/models"
-	"kamal/server/social-commerce/server/src/viewmodels"
+	"../models"
+	"../viewmodels"
 )
 
 func ConvertCategoryToView(category models.Category) viewmodels.Category {

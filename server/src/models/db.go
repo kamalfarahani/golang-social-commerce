@@ -13,6 +13,7 @@ func CreateTables() {
 	CreateProductTable()
 	CreateCategoryTable()
 	CreateUserTable()
+	CreateOrderTable()
 }
 
 func getConnectionDB() *gorm.DB {
