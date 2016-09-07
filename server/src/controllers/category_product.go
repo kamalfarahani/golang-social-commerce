@@ -17,10 +17,10 @@ func getCategoryProdcutsByPage(context *iris.Context) {
 		return
 	}
 
-	rawProducts :=
+	rawProducts, err :=
 		models.GetCategoryProductsByPage(name, uint(page))
-	if rawProducts == nil {
-		context.NotFound()
+	if err != nil {
+		context.Write(err.Error())
 		return
 	}
 

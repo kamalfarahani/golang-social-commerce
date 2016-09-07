@@ -40,21 +40,20 @@ func GetProductsByCategoryID(id uint) ([]Product, error) {
 	return productsArr, errors.New("Category has no product")
 }
 
-//this function has to be fixed
-func GetCategoryProductsByPage(catName string, pageNum uint) []Product {
+func GetCategoryProductsByPage(catName string, pageNum uint) ([]Product, error) {
 	var productsArr []Product
 	cat, _ := GetCategoryByName(catName)
-	// offset := (pageNum - 1) * 10
+	offset := (pageNum - 1) * 10
 
 	db := getConnectionDB()
 	defer db.Close()
-	db.Model(cat).
+	db.Model(cat).Limit(10).Offset(offset).
 		Related(&productsArr, "products")
 
 	if len(productsArr) > 0 {
-		return productsArr
+		return productsArr, nil
 	}
-	return nil
+	return productsArr, errors.New("No more products")
 }
 
 func GetCategoryByProductID(id uint) (*Category, error) {
