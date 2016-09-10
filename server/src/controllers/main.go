@@ -20,10 +20,3 @@ func Register() {
 
 	iris.Listen(":8585")
 }
-
-func addJsonHeader(context *iris.Context) {
-	context.SetHeader("Content-Type", "application/json")
-	context.SetHeader("Access-Control-Allow-Origin", "*")
-	context.SetHeader("Access-Control-Allow-Headers",
-		"Origin, X-Requested-With, Content-Type, Accept")
-}

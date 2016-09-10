@@ -7,11 +7,12 @@ import (
 )
 
 func likeProduct(context *iris.Context) {
+	addAccessHeaders(context)
+
 	if !isUserLogined(context) {
 		context.Write("Please login")
 		return
 	}
-
 	userID := getSessionInt(context)
 
 	productID, err := context.ParamInt("id")

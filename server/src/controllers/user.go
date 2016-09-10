@@ -7,6 +7,8 @@ import (
 )
 
 func registerUser(context *iris.Context) {
+	addAccessHeaders(context)
+
 	nameStr :=
 		string(context.FormValue("name"))
 	passwordStr :=
@@ -16,7 +18,6 @@ func registerUser(context *iris.Context) {
 
 	err := models.SaveUser(
 		nameStr, emailStr, passwordStr)
-
 	if err != nil {
 		context.Write(err.Error())
 		return
@@ -25,6 +26,8 @@ func registerUser(context *iris.Context) {
 }
 
 func loginUser(context *iris.Context) {
+	addAccessHeaders(context)
+
 	nameStr :=
 		string(context.FormValue("name"))
 	passwordStr :=
@@ -36,6 +39,7 @@ func loginUser(context *iris.Context) {
 func setUserSession(name, password string, context *iris.Context) {
 	user, err :=
 		models.GetUserByNameAndPassword(name, password)
+
 	if err == nil {
 		context.Session().Set("user_id", user.ID)
 		context.Write("welcome %s", name)

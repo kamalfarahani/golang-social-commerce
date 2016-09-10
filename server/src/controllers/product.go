@@ -11,6 +11,8 @@ import (
 )
 
 func getProduct(context *iris.Context) {
+	addAccessHeaders(context)
+
 	id, err := context.ParamInt("id")
 	if err != nil {
 		context.NotFound()
@@ -32,6 +34,8 @@ func getProduct(context *iris.Context) {
 }
 
 func getProductsByPage(context *iris.Context) {
+	addAccessHeaders(context)
+
 	page, err := context.ParamInt("pageNum")
 	if err != nil {
 		context.NotFound()
@@ -53,6 +57,8 @@ func getProductsByPage(context *iris.Context) {
 }
 
 func getProductsPageCount(context *iris.Context) {
+	addAccessHeaders(context)
+
 	countStr :=
 		strconv.Itoa(int(models.GetProductsPageCount()))
 	context.Write(countStr)

@@ -10,8 +10,9 @@ import (
 )
 
 func getCategory(context *iris.Context) {
-	name := context.Param("name")
+	addAccessHeaders(context)
 
+	name := context.Param("name")
 	rawCat, err := models.GetCategoryByName(name)
 	if err != nil {
 		context.Write(err.Error())
@@ -26,6 +27,8 @@ func getCategory(context *iris.Context) {
 }
 
 func getAllCategories(context *iris.Context) {
+	addAccessHeaders(context)
+
 	rawCats := models.GetAllCategories()
 	vmCats :=
 		converters.ConvertCategoriesToViews(rawCats)

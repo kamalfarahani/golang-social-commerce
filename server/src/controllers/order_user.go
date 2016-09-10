@@ -8,6 +8,8 @@ import (
 )
 
 func orderProduct(context *iris.Context) {
+	addAccessHeaders(context)
+
 	if !isUserLogined(context) {
 		context.Write("Please login!")
 		return

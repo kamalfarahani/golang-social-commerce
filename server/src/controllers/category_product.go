@@ -10,6 +10,8 @@ import (
 )
 
 func getCategoryProdcutsByPage(context *iris.Context) {
+	addAccessHeaders(context)
+
 	name := context.Param("name")
 	page, err := context.ParamInt("pageNum")
 	if err != nil {
