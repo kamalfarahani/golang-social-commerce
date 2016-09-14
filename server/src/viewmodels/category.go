@@ -1,8 +1,8 @@
 package viewmodels
 
 type Category struct {
-	Name     string
-	ImgUrl   string
-	ID       uint
-	Products []Product
+	ID       uint      `json:"id"`
+	Name     string    `json:"name"`
+	ImgUrl   string    `json:"imgUrl"`
+	Products []Product `json:"products"`
 }
