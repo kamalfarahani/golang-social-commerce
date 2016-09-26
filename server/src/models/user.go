@@ -3,10 +3,11 @@ package models
 import (
 	"crypto/sha256"
 	"encoding/hex"
-	"errors"
 
 	"github.com/asaskevich/govalidator"
 	"github.com/jinzhu/gorm"
+
+	"../constants"
 )
 
 type User struct {
@@ -56,7 +57,7 @@ func GetUserByID(id uint) (*User, error) {
 	if result.Name != "" {
 		return result, nil
 	}
-	return result, errors.New("id is wrong")
+	return result, constants.USER_ID_ERR
 }
 
 func GetUserByNameAndPassword(name, password string) (*User, error) {
@@ -71,7 +72,7 @@ func GetUserByNameAndPassword(name, password string) (*User, error) {
 	if result.Name != "" {
 		return result, nil
 	}
-	return result, errors.New("name or password is wrong")
+	return result, constants.NAME_PASSWORD_WRONG_ERR
 }
 
 func GetUserByName(name string) (*User, error) {
@@ -85,7 +86,7 @@ func GetUserByName(name string) (*User, error) {
 	if result.Name != "" {
 		return result, nil
 	}
-	return result, errors.New("name is wrong")
+	return result, constants.NAME_ERR
 }
 
 func hasheString(str string) string {
@@ -95,15 +96,15 @@ func hasheString(str string) string {
 
 func userValidation(name, email, password string) error {
 	if len(name) < 3 {
-		return errors.New("Name is too short")
+		return constants.SHORT_NAME_ERR
 	}
 
 	if len(password) < 6 {
-		return errors.New("Password is too short")
+		return constants.SHORT_PASSWORD_ERR
 	}
 
 	if !govalidator.IsEmail(email) {
-		return errors.New("The email is invalid")
+		return constants.INVALID_EMAIL_ERR
 	}
 
 	return nil

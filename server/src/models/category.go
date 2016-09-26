@@ -1,15 +1,15 @@
 package models
 
 import (
-	"errors"
-
 	"github.com/jinzhu/gorm"
+
+	"../constants"
 )
 
 type Category struct {
 	gorm.Model
-	Name     string `sql:"size:50;unique;unique_index"`
 	ImgUrl   string
+	Name     string    `sql:"size:50;unique;unique_index"`
 	Products []Product `gorm:"ForeignKey:CatID"`
 }
 
@@ -54,7 +54,7 @@ func GetCategoryByName(name string) (*Category, error) {
 	if result.Name != "" {
 		return result, nil
 	}
-	return result, errors.New("Category name is wrong")
+	return result, constants.CAT_NAME_ERR
 }
 
 func GetCategoryByID(id uint) (*Category, error) {
@@ -69,7 +69,7 @@ func GetCategoryByID(id uint) (*Category, error) {
 	if result.Name != "" {
 		return result, nil
 	}
-	return result, errors.New("Category id is wrong")
+	return result, constants.CAT_ID_ERR
 }
 
 func DeleteCategoryByID(id uint) {

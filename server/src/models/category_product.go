@@ -1,13 +1,12 @@
 package models
 
-import "errors"
+import "../constants"
 
 func GetProductsByCategoryName(catName string) ([]Product, error) {
 	var productsArr []Product
 	cat, err := GetCategoryByName(catName)
 	if err != nil {
-		return productsArr,
-			errors.New("invalid category name")
+		return productsArr, err
 	}
 
 	db := getConnectionDB()
@@ -18,15 +17,14 @@ func GetProductsByCategoryName(catName string) ([]Product, error) {
 	if len(productsArr) > 0 {
 		return productsArr, nil
 	}
-	return productsArr, errors.New("Category has no product")
+	return productsArr, constants.CAT_NO_PRODUCT_ERR
 }
 
-func GetProductsByCategoryID(id uint) ([]Product, error) {
+func GetProductsByCategoryID(catID uint) ([]Product, error) {
 	var productsArr []Product
-	cat, err := GetCategoryByID(id)
+	cat, err := GetCategoryByID(catID)
 	if err != nil {
-		return productsArr,
-			errors.New("invalid category id")
+		return productsArr, err
 	}
 
 	db := getConnectionDB()
@@ -37,7 +35,7 @@ func GetProductsByCategoryID(id uint) ([]Product, error) {
 	if len(productsArr) > 0 {
 		return productsArr, nil
 	}
-	return productsArr, errors.New("Category has no product")
+	return productsArr, constants.CAT_NO_PRODUCT_ERR
 }
 
 func GetCategoryProductsByPage(catName string, pageNum uint) ([]Product, error) {
@@ -53,11 +51,11 @@ func GetCategoryProductsByPage(catName string, pageNum uint) ([]Product, error) 
 	if len(productsArr) > 0 {
 		return productsArr, nil
 	}
-	return productsArr, errors.New("No more products")
+	return productsArr, constants.CAT_END_PRODUCT_ERR
 }
 
-func GetCategoryByProductID(id uint) (*Category, error) {
-	product, err := GetProductByID(id)
+func GetCategoryByProductID(productID uint) (*Category, error) {
+	product, err := GetProductByID(productID)
 	if err != nil {
 		return nil, err
 	}

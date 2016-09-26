@@ -1,9 +1,9 @@
 package models
 
 import (
-	"errors"
-
 	"github.com/jinzhu/gorm"
+
+	"../constants"
 )
 
 type Product struct {
@@ -45,13 +45,12 @@ func GetProductByID(id uint) (*Product, error) {
 	if result.Name != "" {
 		return result, nil
 	}
-	return result, errors.New("Product ID is wrong")
+	return result, constants.PRODUCT_ID_ERR
 }
 
 func GetProductsByPage(pageNum uint) ([]Product, error) {
 	if pageNum > GetProductsPageCount() {
-		return nil, errors.New(
-			"The page is bigger than page count")
+		return nil, constants.END_PAGE_ERR
 	}
 
 	var productsArr []Product
@@ -75,7 +74,7 @@ func GetProductsByName(name string) ([]Product, error) {
 	if len(productsArr) > 0 {
 		return productsArr, nil
 	} else {
-		return productsArr, errors.New("No product found")
+		return productsArr, constants.PRODUCT_NAME_ERR
 	}
 }
 
@@ -87,7 +86,7 @@ func GetProductsPageCount() uint {
 	db.Model(&Product{}).Count(&productsCount)
 
 	pageCountInt :=
-		(productsCount / 10.0)
+		(productsCount / 10)
 	pageCountFloat :=
 		(float32(productsCount) / 10.0)
 

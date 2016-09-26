@@ -1,13 +1,13 @@
 package models
 
-import "errors"
+import "../constants"
 
 func SaveOrder(productID uint, userID uint, number uint) error {
 	_, productErr := GetProductByID(productID)
 	_, userErr := GetUserByID(userID)
 
 	if productErr != nil || userErr != nil {
-		return errors.New("wrong data")
+		return constants.WRONG_DATA_ERR
 	}
 
 	db := getConnectionDB()

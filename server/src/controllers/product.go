@@ -22,7 +22,7 @@ func getProduct(context *iris.Context) {
 	rawProduct, err :=
 		models.GetProductByID(uint(id))
 	if err != nil {
-		context.Write(err.Error())
+		context.WriteString(err.Error())
 		return
 	}
 
@@ -30,7 +30,7 @@ func getProduct(context *iris.Context) {
 		converters.ConvertProductToView(*rawProduct)
 	jsonProduct, _ := json.Marshal(&vmProduct)
 	addJsonHeader(context)
-	context.Write(string(jsonProduct))
+	context.WriteString(string(jsonProduct))
 }
 
 func getProductsByPage(context *iris.Context) {
@@ -45,7 +45,7 @@ func getProductsByPage(context *iris.Context) {
 	rawProducts, err :=
 		models.GetProductsByPage(uint(page))
 	if err != nil {
-		context.Write(err.Error())
+		context.WriteString(err.Error())
 		return
 	}
 
@@ -53,7 +53,7 @@ func getProductsByPage(context *iris.Context) {
 		converters.ConvertProductsToViews(rawProducts)
 	jsonProduct, _ := json.Marshal(vmProducts)
 	addJsonHeader(context)
-	context.Write(string(jsonProduct))
+	context.WriteString(string(jsonProduct))
 }
 
 func getProductsPageCount(context *iris.Context) {
@@ -61,5 +61,5 @@ func getProductsPageCount(context *iris.Context) {
 
 	countStr :=
 		strconv.Itoa(int(models.GetProductsPageCount()))
-	context.Write(countStr)
+	context.WriteString(countStr)
 }

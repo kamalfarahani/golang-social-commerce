@@ -12,6 +12,7 @@ func init() {
 func CreateTables() {
 	CreateProductTable()
 	CreateCategoryTable()
+	CreateCollectionTable()
 	CreateUserTable()
 	CreateOrderTable()
 }

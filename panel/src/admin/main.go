@@ -14,20 +14,22 @@ import (
 
 func MakeAdminPanel() {
 	db := getConnectionDB()
-	db.AutoMigrate(&models.Product{}, &models.Category{})
+	db.AutoMigrate(
+		&models.Product{}, &models.Category{}, &models.Collection{})
 
 	// Initalize
 	myAdmin := admin.New(&qor.Config{DB: db})
 
 	// Create resources from GORM-backend model
-	myAdmin.AddResource(&models.Category{})
 	myAdmin.AddResource(&models.Product{})
+	myAdmin.AddResource(&models.Category{})
+	myAdmin.AddResource(&models.Collection{})
 
 	// Register route
 	mux := http.NewServeMux()
 	// amount to /admin, so visit `/admin` to view the admin interface
 	myAdmin.MountTo("/admin", mux)
-	myAdmin.SetSiteName("Social commerce admin panel")
+	myAdmin.SetSiteName("Yime admin panel")
 
 	log.Println("Admin panel listening on: 9000")
 	http.ListenAndServe(":9000", mux)
