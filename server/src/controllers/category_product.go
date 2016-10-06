@@ -1,8 +1,6 @@
 package controllers
 
 import (
-	"encoding/json"
-
 	"github.com/kataras/iris"
 
 	"../converters"
@@ -22,13 +20,13 @@ func getCategoryProdcutsByPage(context *iris.Context) {
 	rawProducts, err :=
 		models.GetCategoryProductsByPage(name, uint(page))
 	if err != nil {
-		context.Write(err.Error())
+		context.WriteString(err.Error())
 		return
 	}
 
 	vmProducts :=
 		converters.ConvertProductsToViews(rawProducts)
-	jsonProduct, _ := json.Marshal(vmProducts)
+	jsonProduct := jsonStr(vmProducts)
 	addJsonHeader(context)
-	context.Write(string(jsonProduct))
+	context.WriteString(jsonProduct)
 }

@@ -1,8 +1,6 @@
 package controllers
 
 import (
-	"encoding/json"
-
 	"github.com/kataras/iris"
 
 	"../converters"
@@ -15,15 +13,15 @@ func getCategory(context *iris.Context) {
 	name := context.Param("name")
 	rawCat, err := models.GetCategoryByName(name)
 	if err != nil {
-		context.Write(err.Error())
+		context.WriteString(err.Error())
 		return
 	}
 
 	vmCat :=
 		converters.ConvertCategoryToView(*rawCat)
-	jsonCat, _ := json.Marshal(&vmCat)
+	jsonCat := jsonStr(&vmCat)
 	addJsonHeader(context)
-	context.Write(string(jsonCat))
+	context.WriteString(jsonCat)
 }
 
 func getAllCategories(context *iris.Context) {
@@ -32,7 +30,7 @@ func getAllCategories(context *iris.Context) {
 	rawCats := models.GetAllCategories()
 	vmCats :=
 		converters.ConvertCategoriesToViews(rawCats)
-	jsonCats, _ := json.Marshal(vmCats)
+	jsonCats := jsonStr(vmCats)
 	addJsonHeader(context)
-	context.Write(string(jsonCats))
+	context.WriteString(jsonCats)
 }

@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"encoding/json"
 	"strconv"
 
 	"github.com/kataras/iris"
@@ -28,9 +27,9 @@ func getProduct(context *iris.Context) {
 
 	vmProduct :=
 		converters.ConvertProductToView(*rawProduct)
-	jsonProduct, _ := json.Marshal(&vmProduct)
+	jsonProduct := jsonStr(&vmProduct)
 	addJsonHeader(context)
-	context.WriteString(string(jsonProduct))
+	context.WriteString(jsonProduct)
 }
 
 func getProductsByPage(context *iris.Context) {
@@ -51,9 +50,9 @@ func getProductsByPage(context *iris.Context) {
 
 	vmProducts :=
 		converters.ConvertProductsToViews(rawProducts)
-	jsonProduct, _ := json.Marshal(vmProducts)
+	jsonProduct := jsonStr(vmProducts)
 	addJsonHeader(context)
-	context.WriteString(string(jsonProduct))
+	context.WriteString(jsonProduct)
 }
 
 func getProductsPageCount(context *iris.Context) {

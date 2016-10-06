@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"encoding/json"
 	"strconv"
 
 	"github.com/kataras/iris"
@@ -22,9 +21,9 @@ func getCollection(context *iris.Context) {
 
 	vmCol :=
 		converters.ConvertCollectionToView(*rawCol)
-	jsonCol, _ := json.Marshal(&vmCol)
+	jsonCol := jsonStr(&vmCol)
 	addJsonHeader(context)
-	context.WriteString(string(jsonCol))
+	context.WriteString(jsonCol)
 }
 
 func getAllCollections(context *iris.Context) {
@@ -33,7 +32,7 @@ func getAllCollections(context *iris.Context) {
 	rawCols := models.GetAllCollections()
 	vmCols :=
 		converters.ConvertCollectionsToViews(rawCols)
-	jsonCols, _ := json.Marshal(vmCols)
+	jsonCols := jsonStr(vmCols)
 	addJsonHeader(context)
 	context.WriteString(string(jsonCols))
 }
@@ -56,9 +55,9 @@ func getCollectionsByPage(context *iris.Context) {
 
 	vmCols :=
 		converters.ConvertCollectionsToViews(rawCols)
-	jsonCols, _ := json.Marshal(vmCols)
+	jsonCols := jsonStr(vmCols)
 	addJsonHeader(context)
-	context.WriteString(string(jsonCols))
+	context.WriteString(jsonCols)
 }
 
 func getCollectionsPageCount(context *iris.Context) {
