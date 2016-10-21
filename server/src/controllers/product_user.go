@@ -9,11 +9,11 @@ import (
 func likeProduct(context *iris.Context) {
 	addAccessHeaders(context)
 
-	if !isUserLogined(context) {
-		context.Write("Please login")
+	userID, err := getSessionInt(context)
+	if err != nil {
+		context.WriteString(err.Error())
 		return
 	}
-	userID := getSessionInt(context)
 
 	productID, err := context.ParamInt("id")
 	if err != nil {
@@ -22,9 +22,9 @@ func likeProduct(context *iris.Context) {
 	}
 
 	if !models.AddProductLikes(uint(productID), uint(userID)) {
-		context.Write("Data is wrong")
+		context.WriteString("Data is wrong")
 		return
 	}
 
-	context.Write("Done")
+	context.WriteString("Done")
 }

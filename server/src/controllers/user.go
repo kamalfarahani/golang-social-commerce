@@ -3,35 +3,51 @@ package controllers
 import (
 	"github.com/kataras/iris"
 
+	"../constants"
 	"../models"
+	"./captchaSystem"
 )
 
 func registerUser(context *iris.Context) {
 	addAccessHeaders(context)
 
-	nameStr :=
-		string(context.FormValue("name"))
-	passwordStr :=
-		string(context.FormValue("password"))
-	emailStr :=
-		string(context.FormValue("email"))
-
-	err := models.SaveUser(
-		nameStr, emailStr, passwordStr)
+	err :=
+		captchaSystem.ValidateCaptchaByIP(context)
 	if err != nil {
-		context.Write(err.Error())
+		context.WriteString(err.Error())
 		return
 	}
+
+	nameStr :=
+		context.FormValueString("name")
+	emailStr :=
+		context.FormValueString("email")
+	passwordStr :=
+		context.FormValueString("password")
+
+	err =
+		models.SaveUser(nameStr, emailStr, passwordStr)
+	if err != nil {
+		context.WriteString(err.Error())
+		return
+	}
+
 	context.Write("Registered : %s", nameStr)
 }
 
 func loginUser(context *iris.Context) {
 	addAccessHeaders(context)
 
+	err := captchaSystem.ValidateCaptchaByIP(context)
+	if err != nil {
+		context.WriteString(err.Error())
+		return
+	}
+
 	nameStr :=
-		string(context.FormValue("name"))
+		context.FormValueString("name")
 	passwordStr :=
-		string(context.FormValue("password"))
+		context.FormValueString("password")
 
 	setUserSession(nameStr, passwordStr, context)
 }
@@ -39,27 +55,20 @@ func loginUser(context *iris.Context) {
 func setUserSession(name, password string, context *iris.Context) {
 	user, err :=
 		models.GetUserByNameAndPassword(name, password)
-
-	if err == nil {
-		context.Session().Set("user_id", user.ID)
-		context.Write("welcome %s", name)
-	} else {
-		context.Write(err.Error())
+	if err != nil {
+		context.WriteString(err.Error())
+		return
 	}
+
+	context.Session().Set("user_id", user.ID)
+	context.Write("welcome %s", name)
 }
 
-func isUserLogined(context *iris.Context) bool {
-	if getSessionInt(context) != -1 {
-		return true
-	}
-	return false
-}
-
-func getSessionInt(context *iris.Context) int {
+func getSessionInt(context *iris.Context) (int, error) {
 	smap := context.Session().GetAll()
 
 	if userID, ok := smap["user_id"].(uint); ok {
-		return int(userID)
+		return int(userID), nil
 	}
-	return -1
+	return -1, constants.USER_NOT_LOGIN
 }

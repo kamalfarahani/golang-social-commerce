@@ -10,11 +10,11 @@ import (
 func orderProduct(context *iris.Context) {
 	addAccessHeaders(context)
 
-	if !isUserLogined(context) {
-		context.Write("Please login!")
+	userID, err := getSessionInt(context)
+	if err != nil {
+		context.WriteString(err.Error())
 		return
 	}
-	userID := getSessionInt(context)
 
 	productID, err := context.ParamInt("productID")
 	if err != nil {
@@ -25,7 +25,7 @@ func orderProduct(context *iris.Context) {
 	orderNum, err := strconv.Atoi(
 		string(context.FormValue("order_number")))
 	if err != nil {
-		context.Write(err.Error())
+		context.WriteString(err.Error())
 		return
 	}
 
@@ -33,8 +33,8 @@ func orderProduct(context *iris.Context) {
 		uint(productID), uint(userID), uint(orderNum))
 
 	if err != nil {
-		context.Write(err.Error())
+		context.WriteString(err.Error())
 		return
 	}
-	context.Write("Submited")
+	context.WriteString("Submited")
 }

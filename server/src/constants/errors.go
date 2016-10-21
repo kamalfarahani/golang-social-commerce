@@ -24,6 +24,8 @@ const (
 	USER_ID_ERR             = Error("User ID is wrong")
 	NAME_ERR                = Error("User name is wrong")
 
-	WRONG_DATA_ERR = Error("Wrong data")
-	END_PAGE_ERR   = Error("The page is bigger than page conut")
+	WRONG_CAPTCHA_ERR = Error("The captcha is wrong try again")
+	WRONG_DATA_ERR    = Error("Wrong data")
+	USER_NOT_LOGIN    = Error("The user did not login")
+	END_PAGE_ERR      = Error("The page is bigger than page conut")
 )
