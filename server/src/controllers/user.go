@@ -12,7 +12,7 @@ func registerUser(context *iris.Context) {
 	addAccessHeaders(context)
 
 	err :=
-		captchaSystem.ValidateCaptchaByIP(context)
+		captchaSystem.ValidateCaptcha(context)
 	if err != nil {
 		context.WriteString(err.Error())
 		return
@@ -38,7 +38,8 @@ func registerUser(context *iris.Context) {
 func loginUser(context *iris.Context) {
 	addAccessHeaders(context)
 
-	err := captchaSystem.ValidateCaptchaByIP(context)
+	err :=
+		captchaSystem.ValidateCaptcha(context)
 	if err != nil {
 		context.WriteString(err.Error())
 		return

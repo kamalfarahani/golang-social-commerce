@@ -2,13 +2,14 @@ package controllers
 
 import (
 	"image/png"
-	"net/http"
+
+	"github.com/kataras/iris"
 
 	"./captchaSystem"
 )
 
-func makeCaptchaImage(rw http.ResponseWriter, req *http.Request) {
-	rw.Header().Add("Content-Type", "image/png")
-	capImg := captchaSystem.MakeCaptcha(req)
-	png.Encode(rw, capImg)
+func makeCaptchaImage(context *iris.Context) {
+	context.SetHeader("Content-Type", "image/png")
+	capImg := captchaSystem.MakeCaptcha(context)
+	png.Encode(context.Response.BodyWriter(), capImg)
 }

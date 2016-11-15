@@ -20,7 +20,7 @@ func Register() {
 
 	iris.Post("order/:productID", orderProduct)
 
-	iris.Get("/captcha", iris.ToHandlerFunc(makeCaptchaImage))
+	iris.Get("/captcha", makeCaptchaImage)
 
 	iris.Post("user/login", loginUser)
 	iris.Post("user/register", registerUser)

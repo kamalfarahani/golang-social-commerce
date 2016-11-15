@@ -1,59 +1,45 @@
 package captchaSystem
 
 import (
-	"net/http"
-	"strings"
 	"time"
 
-	"github.com/afocus/captcha"
+	"github.com/kamalmax/randString"
 	"github.com/kataras/iris"
-
-	"../../constants"
 )
 
-var ipTime = make(map[string]time.Time)
-var ipCaptcha = make(map[string]string)
+var cookieTime = make(map[string]time.Time)
+var cookieCaptcha = make(map[string]string)
 
 func init() {
-	go deleteOldCaptchas()
+	go captchaGarbageCollector()
 }
 
-func MakeCaptcha(req *http.Request) *captcha.Image {
-	capt := captcha.New()
-	capt.SetFont("../../assets/font/capfont.ttf")
-	capImg, capStr := capt.Create(5, captcha.NUM)
+func setCaptchaCookie(context *iris.Context, capStr string) {
+	cookie := generateCaptchaCookieValue()
+	context.SetCookieKV("captcha", cookie)
 
-	remoteAddr := req.RemoteAddr
-	ip := remoteAddr[:strings.Index(remoteAddr, ":")]
-	ipCaptcha[ip] = capStr
-	ipTime[ip] = time.Now()
-
-	return capImg
+	cookieCaptcha[cookie] = capStr
+	cookieTime[cookie] = time.Now()
 }
 
-func ValidateCaptchaByIP(context *iris.Context) error {
-	ip := context.RequestIP()
-	capStr := context.FormValueString("captcha")
-	if capStr != "" && ipCaptcha[ip] == capStr {
-		delete(ipCaptcha, ip)
-		delete(ipTime, ip)
-
-		return nil
+func generateCaptchaCookieValue() string {
+	exist := true
+	var cookieValue string
+	for exist {
+		cookieValue = randString.RandomString(15)
+		_, exist = cookieCaptcha[cookieValue]
 	}
 
-	delete(ipCaptcha, ip)
-	delete(ipTime, ip)
-
-	return constants.WRONG_CAPTCHA_ERR
+	return cookieValue
 }
 
-func deleteOldCaptchas() {
+func captchaGarbageCollector() {
 	for {
 		time.Sleep(1 * time.Minute)
-		for ip, t := range ipTime {
+		for cookie, t := range cookieTime {
 			if time.Since(t) >= 1*time.Minute {
-				delete(ipCaptcha, ip)
-				delete(ipTime, ip)
+				delete(cookieCaptcha, cookie)
+				delete(cookieTime, cookie)
 			}
 		}
 	}
