@@ -19,7 +19,7 @@ func CreateTables() {
 
 func getConnectionDB() *gorm.DB {
 	db, err := gorm.Open(
-		"mysql", "iris:iris#max@/iris_db?charset=utf8&parseTime=True&loc=Local")
+		"mysql", "db:password/iris_db?charset=utf8&parseTime=True&loc=Local")
 	checkErr(err)
 	return db
 }
